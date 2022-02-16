@@ -7,4 +7,5 @@ Contents of the task:
 05. the machines with 'unreachable' status must be disabled(grayed out & not clickable).
 
 TIP: The code/solutions must be universal, so do not focus on these specific objects & values, imagine you have many objects like these.
+Check on : https://orestsharak.github.io/JS-test/
 
