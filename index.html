@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, minimum-scale=1.0">
+    <title>Test</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+        }
+
+        header {
+            width: 100%;
+            height: 70px;
+            background-color: #c4c4c4;
+        }
+
+        h5 {
+            margin: 10px;
+        }
+
+        #list {
+            display: flex;
+            flex-direction: row;
+        }
+
+        .container {
+            width: calc(100vw - 40px);
+            margin: auto;
+        }
+
+        .item {
+            width: 140px;
+            cursor: pointer;
+            background-color: #e1e1e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 5px;
+            margin: 15px 10px;
+        }
+
+        .item img{
+            width: 63px;
+            height: 63px;
+        }
+
+
+        .disabled {
+            background-color: #c4c4c4;
+            pointer-events: none !important;
+        }
+        @media screen and (max-width:375px) {
+            #list {
+                flex-direction: column;
+            }
+
+            .item {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+<header></header>
+<main class="container">
+    <div id="list"></div>
+</main>
+
+<script>
+
+  const machines = [
+    {
+      "Machine": "12.64.240.11:4000",
+      "Machine name": "Mac",
+      "Status": "unreachable",
+      "ID": "9828039216",
+      "Parent-ID": "2497468915",
+      "Product": "EMS", // Enterprise Multi Server
+      "OS": "macOS 10.15.7"
+    },
+    {
+      "Machine": "192.168.168.4:4000",
+      "Machine name": "Room9-Main",
+      "Status": "running",
+      "ID": "9738285316",
+      "Parent-ID": "2497468915",
+      "Product": "MS", // Multi Server
+      "OS": "Ubuntu 20.04 LTS"
+    },
+    {
+      "Machine": "12.64.242.20:4000",
+      "Machine name": "Dev-Linux",
+      "Status": "unreachable",
+      "ID": "8735056776",
+      "Parent-ID": "9738285316",
+      "Product": "D", // Desktop
+      "OS": "Ubuntu 16.04.7 LTS"
+    }
+  ];
+
+  const list = document.getElementById('list');
+
+
+  const elements = machines.map(function (item) {
+
+    // 03. Instead of displaying 'Product' abbreviations, display full product names.
+
+    if (item.Product === 'MS') {
+      item.Product = 'Multi Server'
+    }
+    if (item.Product === 'EMS') {
+      item.Product = 'Enterprise Multi Server'
+    }
+    if (item.Product === 'D') {
+      item.Product = 'Desktop'
+    }
+
+    // 05. the machines with 'unreachable' status must be disabled(grayed out & not clickable).
+
+    if (item.Status === 'unreachable') {
+      return '<div class="item disabled" id="' + item.ID + '">' + '<img src="images/poster.png" alt="' + item["Machine name"] + '" />' + '<div class="item-capture">' + '<h5>' + item["Machine name"] + '</h5>' + '<h5>' + item.Product + '</h5>' + '<h5>' + item.OS + '</h5>' + '<h5>' + item.Status + '</h5>' + '</div>' + '</div>';
+    } else {
+
+      // 02. each html element must have 'Machine name', 'Product', 'OS' & 'Status' values displayed on the page.
+
+      return '<div class="item" id="' + item.ID + '">' + '<img src="images/poster.png" alt="' + item["Machine name"] + '" />' + '<div class="item-capture">' + '<h5>' + item["Machine name"] + '</h5>' + '<h5>' + item.Product + '</h5>' + '<h5>' + item.OS + '</h5>' + '<h5>' + item.Status + '</h5>' + '</div>' + '</div>';
+    }
+  }).join('');
+
+  // 01. list all objects from 'machines' array as html elements.
+
+  list.innerHTML = elements;
+
+
+  const items = document.querySelectorAll('.item');
+
+  // 04. 'double-clicking' the html element must update the list and only show the child machines of the selected element.(if machine 'ID' matches with another machine's 'Parent-ID', it means that they are related)
+
+  items.forEach(function (item) {
+    item.addEventListener('dblclick', findParentId);
+    item.addEventListener('touchstart', findParentId)
+  });
+
+  function findParentId(e) {
+    let parent = e.currentTarget;
+    let itemId = parent.getAttribute('id');
+    list.innerHTML = machines.map(function (item) {
+      if (item["Parent-ID"] === itemId) {
+        return '<div class="item" id="' + item.ID + '"> ' + '<img src="images/poster.png" alt="' + item["Machine name"] + '" />' + '<div class="item-capture">' + '<h5>' + item["Machine name"] + '</h5>' + '<h5>' + item.Product + '</h5>' + '<h5>' + item.OS + '</h5>' + '<h5>' + item.Status + '</h5>' + '</div>' + '</div>';
+      }
+    }).join('');
+  }
+
+
+</script>
+</body>
+</html>
